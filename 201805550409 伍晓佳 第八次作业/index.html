@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+
+	<body>
+		<div style="width: 1000px; margin: 0 auto; text-align: center;">
+			姓名：<input type="text" id="name" />&nbsp;&nbsp;性别：<input type="radio" name="b" value="0" />男 <input type="radio" name="b" value="1" />女
+			<button id="input">增加记录</button>
+		</div>
+		<br />
+		<div style="width: 1000px; margin: 0 auto;text-align:center">
+			<table id="table" border="1" width="600px" cellspacing="0" style="margin: 0 auto;">
+				<tr>
+					<th>编号</th>
+					<th>姓名</th>
+					<th>性别</th>
+					<th>操作</th>
+				</tr>
+				<tr id="tr1">
+					<th>1</th>
+					<th>张三</th>
+					<th>男</th>
+					<th><button onclick="deleteP1()">删除</button></th>
+				</tr>
+				<tr id="tr2">
+					<th>2</th>
+					<th>李四</th>
+					<th>男</th>
+					<th><button onclick="deleteP2()" id="p2">删除</button></th>
+				</tr>
+				<tr id="tr3">
+					<th>3</th>
+					<th>王五</th>
+					<th>男</th>
+					<th><button onclick="deleteP3()" id="p3">删除</button></th>
+				</tr>
+			</table>
+		</div>
+	</body>
+	<script type="text/javascript">
+		function.deleteP1(){
+			var table=document.getElementById("table");
+			var tr=document.getElementById("tr1");
+			table.removeChild(tr);
+		}
+		function.capture(data) {
+			var fa = data.parentNode.parentNode;
+			fa.parentNode.removeChild(fa);
+		}
+		window.onload = function() {
+			var input_button = document.getElementById("input");
+			var nummer = 0;
+			input_button.onclick = function() {
+				var name = document.getElementById("name").value;
+				var table = document.getElementById("table");
+				nummer++;
+				var sex;
+				for(var i = 0; i <= 1; i++) {
+					if(sexs[i].checked == true) {
+						if(sex[i].value == 0) sex = "男";
+						else sex = "女";
+						break;
+					}
+				}
+				var x = document.createElement("tr");
+				x.innerHTML = "<th>" + nummer + "</th>" + "<th>" + name + "</th>" + "<th>" + sex + "</th>" + "<th><button onclik='capture(this);'>删除</button> </th>";
+				table.appendChild(x);
+			}
+		}
+	</script>
+
+</html>

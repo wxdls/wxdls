@@ -1,0 +1,274 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+
+		<style>
+			#div1 {
+				background: black;
+				overflow: hidden;
+				width: 1000px;
+				height: 200px;
+				margin: 0 auto;
+				border: 1px solid blue;
+			}
+			
+			#div2 {
+				width: 1000px;
+				height: 100px;
+				border: 1px solid blue;
+				margin: 0 auto;
+			}
+			
+			#p1 {
+				position: relative;
+				bottom: 40px;
+				font-size: 24px;
+			}
+			
+			#b1 {
+				position: relative;
+				bottom: 40px;
+				left: 50px;
+			}
+			
+			#p2 {
+				position: relative;
+				bottom: 20px;
+				font-size: 24px;
+			}
+			
+			#b2 {
+				position: relative;
+				bottom: 24px;
+				left: 50px;
+			}
+			
+			#div3 {
+				width: 1000px;
+				height: 200px;
+				border: 1px solid blue;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="div1">
+			<canvas id="canvas"></canvas>
+
+			<script>
+				var txt = "沙虫养殖有限公司";
+				var txtH = 70;
+				var font = "sans-serif";
+				var bg = "#000";
+				var rayColor1 = "#e0f7fa";
+				var rayColor2 = "#18ffff";
+				var fade = 1000;
+
+				var canvas = document.getElementById("canvas");
+				var ctx = canvas.getContext("2d");
+				var cw = canvas.width = window.innerWidth;
+				var ch = canvas.height = window.innerHeight;
+
+				var w2 = cw / 2;
+				var h2 = ch / 2;
+				var pi = Math.PI;
+				var pi2 = pi * .5;
+
+				var txtCanvas = document.createElement("canvas");
+				var txtCtx = txtCanvas.getContext("2d");
+				txtCtx.font = txtH + "px " + font;
+				txtCtx.textBaseline = "middle";
+				var txtW = Math.floor(txtCtx.measureText(txt).width);
+				txtCanvas.width = txtW;
+				txtCanvas.height = txtH * 1.5;
+
+				var gradient = ctx.createRadialGradient(w2, h2, 0, w2, h2, txtW);
+				gradient.addColorStop(0, rayColor2);
+				gradient.addColorStop(1, rayColor1);
+				ctx.strokeStyle = gradient;
+
+				txtCtx.fillStyle = gradient;
+				txtCtx.font = txtH + "px " + font;
+				txtCtx.textBaseline = "middle";
+				txtCtx.fillText(txt, 0, txtH * .5);
+
+				//dirty adjust for descends
+				txtH *= 1.5;
+
+				var bufferCanvas = document.createElement("canvas");
+				bufferCanvas.width = txtW;
+				bufferCanvas.height = txtH;
+				var buffer = bufferCanvas.getContext("2d");
+
+				//text start position
+				var sx = (cw - txtW) * 0.15
+				var sy = (ch - txtH) * 0.1
+
+				////generate data
+				var rays = [];
+				var txtData = txtCtx.getImageData(0, 0, txtW, txtH);
+				for(var i = 0; i < txtData.data.length; i += 4) {
+					var ii = i / 4;
+					var row = Math.floor(ii / txtW)
+					var col = ii % txtW
+					var alpha = txtData.data[i + 3]
+					if(alpha !== 0) {
+						var c = "rgba("
+						c += [txtData.data[i], txtData.data[i + 1], txtData.data[i + 2], alpha / 255]
+						c += ")";
+						rays.push(new Ray(Math.floor(ii / txtW), ii % txtW, c));
+					}
+				}
+
+				var current = 1;
+				//start animation
+				tick();
+
+				function tick() {
+					ctx.clearRect(0, 0, cw, ch)
+					ctx.drawImage(bufferCanvas, 0, 0, current, txtH, sx, sy, current, txtH)
+					ctx.save()
+					ctx.globalAlpha = .07;
+					ctx.globalCompositeOperation = "lighter";
+					if(drawRays(current)) {
+						current++;
+						current = Math.min(current, txtW)
+						window.requestAnimationFrame(tick)
+					} else {
+						fadeOut()
+					}
+					ctx.restore()
+				}
+
+				function fadeOut() {
+					ctx.clearRect(0, 0, cw, ch)
+					ctx.globalAlpha *= .95;
+					ctx.drawImage(bufferCanvas, 0, 0, current, txtH, sx, sy, current, txtH)
+					if(ctx.globalAlpha > .01) {
+						window.requestAnimationFrame(fadeOut)
+					} else {
+						window.setTimeout(restart, 500)
+					}
+				}
+
+				function restart() {
+					for(var i = 0; i < rays.length; i++) {
+						rays[i].reset()
+					}
+					ctx.globalAlpha = 1
+					buffer.clearRect(0, 0, txtW, txtH)
+					current = 1;
+					tick();
+				}
+
+				function drawRays(c) {
+					var count = 0;
+					ctx.beginPath()
+					for(var i = 0; i < rays.length; i++) {
+						var ray = rays[i];
+						if(ray.col < c) {
+							count += ray.draw()
+						}
+					}
+					ctx.stroke()
+					return count !== rays.length;
+				}
+
+				function filterRays(r) {
+					return Boolean(r);
+				}
+
+				function Ray(row, col, f) {
+					this.col = col;
+					this.row = row;
+
+					var xp = sx + col;
+					var yp = sy + row;
+					var fill = f;
+
+					var ath = (txtH / 1.5)
+
+					var a = pi2 * (this.row - ath * .5) / ath;
+					if(a === 0) {
+						a = (Math.random() - .5) * pi2;
+					}
+					var da = .02 * Math.sign(a);
+					da += (Math.random() - .5) * .005;
+					var l = 0;
+					var dl = Math.random() * 2 + 2;
+
+					var buffered = false;
+					this.reset = function() {
+						a = pi2 * (this.row - ath * .5) / ath;
+						if(a === 0) {
+							a = -pi2 * .5;
+						}
+						l = 0;
+						buffered = false
+					}
+					this.draw = function() {
+						if(l < 0) {
+							if(!buffered) {
+								buffer.fillStyle = fill;
+								buffer.fillRect(this.col, this.row, 1, 1);
+								buffered = true
+							}
+							return 1;
+						} else {
+							ctx.moveTo(xp, yp)
+							ctx.lineTo(xp + Math.cos(a) * l, yp + Math.sin(a) * l);
+							a += da;
+							l += Math.cos(a) * dl;
+							return 0;
+						}
+					}
+				}
+			</script>
+		</div>
+				<div id="div2">
+			，
+			<p id="p1">项目发起人</p>
+			<b id="b1">网2 &nbsp;&nbsp;&nbsp;&nbsp;伍晓佳</b>
+		</div>
+		<div id="div2">
+			，
+			<p id="p1">项目名称</p>
+			<b id="b1">让餐厅从此不缺健康美味的沙虫</b>
+		</div>
+		<div id="div2">
+			<p id="p2">项目概况</p>
+			<b id="b2">该项目致力于养殖沙虫，满足广大食客对健康美味的沙虫的舌尖上的要求</b>
+		</div>
+		<div id="div3">
+			<p id="p2">市场背景</p>
+			<b id="b2">沙虫肉质鲜美，营养丰富，主要富含蛋白质，又在美容养颜方面也有独特的功效，其还具有抗菌消炎
+			抗肿瘤的功效，<br/>而且具有很好的养生功效（有些地方甚至把沙虫代替冬虫夏草）。<br/>
+			沙虫价格较贵，但销量巨大，如果投资，会有可观的收益。<br/>再加上海南本地养殖沙虫的养殖户不多，市场竞争不大。<br/>
+			所以市场前景广阔！</b>
+		</div>
+		<div id="div2">
+			<p id="p2">核心竞争力</p>
+			<b id="b2">我们进行的绿色养殖。<br/>我们改进的养殖方式使我们的成本降低，这意味着我们会适当降低价格，让更多食客能吃起健康美味的沙虫。</b>
+		</div>
+		<div id="div2">
+			<p id="p2">营销计划</p>
+			<b id="b2">现在养殖厂所在的镇和市营销，然后再推销到其他的市，最后在全省营销乃至全国。</b>
+		</div>
+		<div id="div2">
+			<p id="p2">运营计划</p>
+			<b id="b2">先在本地乃至本市打响招牌，然后在运营过程中提高公司的知名度，最后让公司闻名于全省乃至全国。</b>
+		</div>
+				<div id="div2">
+			<p id="p2">投资估计及明细</p>
+			<b id="b2">投资整个项目大概要花费一百万。首先要建一个恒温的养殖房，然后要买各种设备，最后要考虑到养殖过程中饲料花销。</b>
+		</div>		<div id="div2">
+			<p id="p2">销售收入和利润预测</p>
+			<b id="b2">预测年销售收入五六百万，净利润三四百万。</b>
+		</div>
+	</body>
+
+</html>

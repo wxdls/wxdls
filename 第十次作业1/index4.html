@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+		<title></title>
+
+		<link rel="stylesheet" type="text/css" href="css/index.css">
+
+	</head>
+
+	<body>
+		<script src="/demos/googlegg.js"></script>
+
+		<div class="wrap">
+			<p style="font-size: 40px; position: relative; bottom: 200px; right: 320px;">项目名称：</p>
+			<p style="font-size: 30px; position: relative; bottom: 460px; right: 100px;">今天你尝到了吗</p>
+			<p style="font-size: 40px;position: relative; bottom: 730px; right: 320px;">核心竞争力：</p>
+			<p style="font-size: 30px;position: relative; bottom: 980px; right: -100px;">项目突破方格星虫养殖技术，可以实现陆地~海滩两地养殖</p>
+			<p style="right: 100px;">我们采用绿色饲料养殖，确保方格星虫绿色健康。</p>
+			<p style="font-size: 30px; position: relative; bottom: 1480px; right: -50px;">我们通过改进了方格星虫养殖方法，<br />打破了传统养殖方式，大大减小了成本。</p>
+			<p style="font-size: 40px;position: relative; bottom: 1720px; right: 320px;">线下业务：</p>
+			<p style="font-size: 30px;position: relative; bottom: 1970px; right: -50px;">在本地开方格星虫专卖店。<br />扩大销路，加大于各大海鲜食品店的交易份额。</p>
+			<p style="font-size: 40px; position: relative; bottom: 2230px; right: 320px;">线上业务：</p>
+			<p style="font-size: 30px;position: relative; bottom: 2500px; right: -100px;">开全国连锁方格星虫专卖网店，实现顾客线上购物。</p>
+		</div>
+		<div class="nav-main">
+			<div class="nav-box">
+				<div class="nav">
+					<ul class="nav-ul">
+						<li>
+							<a href="index.html" class="home"><span>首页</span></a>
+						</li>
+						<li>
+							<a href="index2.html" class="develop"><span>公司理念</span></a>
+						</li>
+						<li>
+							<a href="index3.html" class="wechat"><span>公司目标</span></a>
+						</li>
+						<li>
+							<a href="index4.html" class="case"><span>项目简介</span></a>
+						</li>
+						<li>
+							<a href="index5.html" class="news"><span>CEO</span></a>
+						</li>
+						<li>
+							<a href="index6.html" class="contact"><span>关于我们</span></a>
+						</li>
+					</ul>
+				</div>
+				<div class="nav-slide">
+					<div class="nav-slide-o"></div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				var thisTime;
+				$('.nav-ul li').mouseleave(function(even) {
+					thisTime = setTimeout(thisMouseOut, 1000);
+				})
+
+				$('.nav-ul li').mouseenter(function() {
+					clearTimeout(thisTime);
+					var thisUB = $('.nav-ul li').index($(this));
+					if($.trim($('.nav-slide-o').eq(thisUB).html()) != "") {
+						$('.nav-slide').addClass('hover');
+						$('.nav-slide-o').hide();
+						$('.nav-slide-o').eq(thisUB).show();
+					} else {
+						$('.nav-slide').removeClass('hover');
+					}
+
+				})
+
+				function thisMouseOut() {
+					$('.nav-slide').removeClass('hover');
+				}
+
+				$('.nav-slide').mouseenter(function() {
+					clearTimeout(thisTime);
+					$('.nav-slide').addClass('hover');
+				})
+				$('.nav-slide').mouseleave(function() {
+					$('.nav-slide').removeClass('hover');
+				})
+
+			})
+		</script>
+
+	</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+		<title></title>
+
+		<link rel="stylesheet" type="text/css" href="css/index.css">
+
+	</head>
+
+	<body>
+		<script src="/demos/googlegg.js"></script>
+
+		<div class="wrap">
+			<p style="font-size: 60px; position: relative;bottom: 140px;">更多了解请关注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+				<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;我们的官Q：88888888888 <br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;公众号：方格星</p>
+			<div class="logo">
+				<h1><a href="#"><img src="img/t013a0229c01083a79f.png" ></a></h1>
+			</div>
+		</div>
+		<div class="nav-main">
+			<div class="nav-box">
+				<div class="nav">
+					<ul class="nav-ul">
+						<li>
+							<a href="index.html" class="home"><span>首页</span></a>
+						</li>
+						<li>
+							<a href="index2.html" class="develop"><span>公司理念</span></a>
+						</li>
+						<li>
+							<a href="index3.html" class="wechat"><span>公司目标</span></a>
+						</li>
+						<li>
+							<a href="index4.html" class="case"><span>项目简介</span></a>
+						</li>
+						<li>
+							<a href="index5.html" class="news"><span>CEO</span></a>
+						</li>
+						<li>
+							<a href="index6.html" class="contact"><span>关于我们</span></a>
+						</li>
+					</ul>
+				</div>
+				<div class="nav-slide">
+					<div class="nav-slide-o"></div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				var thisTime;
+				$('.nav-ul li').mouseleave(function(even) {
+					thisTime = setTimeout(thisMouseOut, 1000);
+				})
+
+				$('.nav-ul li').mouseenter(function() {
+					clearTimeout(thisTime);
+					var thisUB = $('.nav-ul li').index($(this));
+					if($.trim($('.nav-slide-o').eq(thisUB).html()) != "") {
+						$('.nav-slide').addClass('hover');
+						$('.nav-slide-o').hide();
+						$('.nav-slide-o').eq(thisUB).show();
+					} else {
+						$('.nav-slide').removeClass('hover');
+					}
+
+				})
+
+				function thisMouseOut() {
+					$('.nav-slide').removeClass('hover');
+				}
+
+				$('.nav-slide').mouseenter(function() {
+					clearTimeout(thisTime);
+					$('.nav-slide').addClass('hover');
+				})
+				$('.nav-slide').mouseleave(function() {
+					$('.nav-slide').removeClass('hover');
+				})
+
+			})
+		</script>
+
+	</body>
+
+</html>
